@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use rayon::prelude::*;
 use three_d::*;
-use tracing::{debug, info, trace, warn};
+use tracing::{debug, info, trace};
 
 use crate::logger::Logger;
 use crate::{Simulation, renderer::particle::RenderParticle};
