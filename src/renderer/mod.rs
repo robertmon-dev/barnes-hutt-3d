@@ -4,7 +4,9 @@ use std::collections::HashMap;
 
 use rayon::prelude::*;
 use three_d::*;
+use tracing::{debug, info, trace, warn};
 
+use crate::logger::Logger;
 use crate::{Simulation, renderer::particle::RenderParticle};
 
 #[derive(Hash, PartialEq, Eq)]
@@ -88,13 +90,21 @@ impl Renderer {
         let visual_scale = 10_000.0;
 
         self.window.render_loop(move |mut frame_input| {
+            let frame_span = Logger::create_frame_span(self.frames);
+            let _entered = frame_span.enter();
+
             self.camera.set_viewport(frame_input.viewport);
             self.control
                 .handle_events(&mut self.camera, &mut frame_input.events);
 
+            debug!("Starting simulation step (dt = 0.016)");
             simulation.step(0.016, &mut render_buffer);
 
             if let Some(instances) = self.instances.get_mut(&BodyType::Body) {
+                trace!(
+                    "Updating transformations for: {} particles",
+                    render_buffer.len()
+                );
                 render_buffer
                     .par_iter()
                     .zip(instances.transformations.par_iter_mut())
@@ -120,7 +130,11 @@ impl Renderer {
 
             self.frames += 1;
             if self.last_check.elapsed().as_secs() >= 1 {
-                println!("FPS: {}", self.frames);
+                info!(
+                    fps = self.frames,
+                    total_bodies = render_buffer.len(),
+                    "Performance"
+                );
                 self.frames = 0;
                 self.last_check = std::time::Instant::now();
             }

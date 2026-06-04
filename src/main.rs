@@ -1,5 +1,6 @@
 mod aabb;
 mod collision_solver;
+mod logger;
 mod octree;
 mod particle;
 mod renderer;
@@ -12,6 +13,7 @@ use vector::Vector3;
 
 use crate::aabb::Aabb;
 use crate::collision_solver::CollisionSolver;
+use crate::logger::Logger;
 use crate::particle::traits::Moving;
 use crate::renderer::particle::RenderParticle;
 use crate::vector::traits::Distributing;
@@ -59,6 +61,8 @@ impl Simulation {
 }
 
 fn main() {
+    logger::Logger::init();
+
     let world_half_dimension = 1000000.0 * 10.0;
     let particle_count = 100000;
     let particle_radius = 12.0;
