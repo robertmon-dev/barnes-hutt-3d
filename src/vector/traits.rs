@@ -140,6 +140,7 @@ pub trait Distributing {
     ) -> Vector3;
     fn splash_coordinates(i: usize, n: usize, r: f32) -> Vector3;
     fn distribute_across_the_torus(n: usize, r_inn: f32, r_out: f32) -> Vec<Vector3>;
+    fn distribute_across_the_sphere(n: usize, r: f32) -> Vec<Vector3>;
 }
 
 impl Distributing for Vector3 {
@@ -170,6 +171,16 @@ impl Distributing for Vector3 {
         let default_phi = (1.0 + 5.0_f32.sqrt()) / 2.0;
         let default_epsilon = 0.0;
         Self::splash_coordinates_with_phi_epsilon(i, n, default_phi, default_epsilon, r)
+    }
+
+    fn distribute_across_the_sphere(n: usize, r: f32) -> Vec<Vector3> {
+        let mut bodies = Vec::with_capacity(n);
+        for i in 0..n {
+            let position = Self::splash_coordinates(i, n, r);
+            bodies.push(position);
+        }
+
+        bodies
     }
 
     fn distribute_across_the_torus(n: usize, r_inn: f32, r_out: f32) -> Vec<Vector3> {
