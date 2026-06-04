@@ -7,7 +7,6 @@ mod vector;
 
 use particle::Particle;
 use rayon::prelude::*;
-use three_d::*;
 
 use vector::Vector3;
 
@@ -81,5 +80,6 @@ fn main() {
 
     let simulation = Simulation::new(particles, world_bounds, particle_radius);
     let renderer = renderer::Renderer::new(world_half_dimension, particle_count);
+
     renderer.run(simulation, render_buffer);
 }
