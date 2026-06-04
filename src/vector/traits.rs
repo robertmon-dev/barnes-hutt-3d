@@ -36,7 +36,7 @@ impl VectorOps for Vector3 {
     }
 
     fn square(&self) -> f64 {
-        self.x.powi(2) + self.y.powi(2)
+        self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 
     fn cross(&self, other: &Self) -> Self {
