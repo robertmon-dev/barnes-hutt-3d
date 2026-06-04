@@ -16,16 +16,12 @@ pub enum BodyType {
 
 pub struct Renderer {
     window: Window,
-    context: Context,
     camera: Camera,
     instances: HashMap<BodyType, Instances>,
     models: HashMap<BodyType, Gm<InstancedMesh, PhysicalMaterial>>,
     light: DirectionalLight,
     control: OrbitControl,
 
-    half_dimension: f32,
-
-    bodies_count: usize,
     frames: usize,
     last_check: std::time::Instant,
 }
@@ -78,14 +74,11 @@ impl Renderer {
 
         Self {
             window,
-            context,
             camera,
             instances: instances_map,
             models,
             light,
             control,
-            half_dimension: world_half_dimension,
-            bodies_count,
             frames: 0,
             last_check: std::time::Instant::now(),
         }
