@@ -64,10 +64,7 @@ fn main() {
     let particle_count = 100000;
     let particle_radius = 12.0;
 
-    let positions: Vec<Vector3> = (0..particle_count)
-        .map(|i| Vector3::splash_coordinates(i, particle_count, world_half_dimension))
-        .collect();
-
+    let positions = Vector3::distribute_across_the_sphere(particle_count, world_half_dimension);
     let particles: Vec<Particle> = positions
         .iter()
         .map(|pos| Particle::new(*pos, *pos, Vector3::zero(), 10.0, particle_radius))
@@ -75,83 +72,14 @@ fn main() {
 
     let world_bounds = Aabb::new(Vector3::zero(), world_half_dimension as f64 * 3.0);
 
-    let mut render_buffer = vec![
+    let render_buffer = vec![
         RenderParticle {
             position: [0.0, 0.0, 0.0]
         };
         particle_count
     ];
-    let mut simulation = Simulation::new(particles, world_bounds, particle_radius);
 
-    let window = Window::new(WindowSettings {
-        title: "Barness-Hutt".to_string(),
-        max_size: Some((1280, 720)),
-        ..Default::default()
-    })
-    .unwrap();
-    let context = window.gl();
-
-    let mut camera = Camera::new_perspective(
-        window.viewport(),
-        vec3(0.0, world_half_dimension, world_half_dimension * 4.0),
-        vec3(0.0, 0.0, 0.0),
-        vec3(0.0, 1.0, 0.0),
-        degrees(45.0),
-        1.0,
-        world_half_dimension * 20.0,
-    );
-    let mut control = OrbitControl::new(camera.target(), 1.0, world_half_dimension * 10.0);
-
-    let light = DirectionalLight::new(&context, 2.0, Srgba::WHITE, vec3(0.0, -1.0, -1.0));
-
-    let cpu_mesh = CpuMesh::sphere(8);
-    let material = PhysicalMaterial::new_opaque(
-        &context,
-        &CpuMaterial {
-            albedo: Srgba::new_opaque(50, 150, 255),
-            ..Default::default()
-        },
-    );
-
-    let mut instances = Instances {
-        transformations: vec![Mat4::identity(); particle_count],
-        ..Default::default()
-    };
-    let instanced_mesh = InstancedMesh::new(&context, &instances, &cpu_mesh);
-    let mut model = Gm::new(instanced_mesh, material);
-
-    let mut frames = 0;
-    let mut last_check = std::time::Instant::now();
-
-    window.render_loop(move |mut frame_input| {
-        camera.set_viewport(frame_input.viewport);
-        control.handle_events(&mut camera, &mut frame_input.events);
-
-        simulation.step(0.016, &mut render_buffer);
-        let visual_scale = 10_000.0;
-
-        render_buffer
-            .par_iter()
-            .zip(instances.transformations.par_iter_mut())
-            .for_each(|(rp, t)| {
-                *t = Mat4::from_translation(vec3(rp.position[0], rp.position[1], rp.position[2]))
-                    * Mat4::from_scale(visual_scale);
-            });
-
-        model.geometry.set_instances(&instances);
-
-        frame_input
-            .screen()
-            .clear(ClearState::color_and_depth(0.05, 0.05, 0.05, 1.0, 1.0))
-            .render(&camera, [&model], &[&light]);
-
-        frames += 1;
-        if last_check.elapsed().as_secs() >= 1 {
-            println!("FPS: {}", frames);
-            frames = 0;
-            last_check = std::time::Instant::now();
-        }
-
-        FrameOutput::default()
-    });
+    let simulation = Simulation::new(particles, world_bounds, particle_radius);
+    let renderer = renderer::Renderer::new(world_half_dimension, particle_count);
+    renderer.run(simulation, render_buffer);
 }
