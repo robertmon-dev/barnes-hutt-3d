@@ -14,9 +14,7 @@ use vector::Vector3;
 
 use crate::aabb::Aabb;
 use crate::collision_solver::CollisionSolver;
-use crate::distribution::{
-    distribute_across_the_torus, splash_coordinates, splash_coordinates_with_phi_epsilon,
-};
+use crate::distribution::splash_coordinates;
 use crate::particle::traits::Moving;
 use crate::renderer::particle::RenderParticle;
 use crate::vector::traits::VectorOps;
