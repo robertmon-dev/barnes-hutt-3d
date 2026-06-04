@@ -24,10 +24,11 @@ pub struct Renderer {
 
     frames: usize,
     last_check: std::time::Instant,
+    scale: f32,
 }
 
 impl Renderer {
-    pub fn new(world_half_dimension: f32, bodies_count: usize) -> Self {
+    pub fn new(world_half_dimension: f32, bodies_count: usize, scale: f32) -> Self {
         let window = Window::new(WindowSettings {
             title: "Barness-Hutt".to_string(),
             max_size: Some((1280, 720)),
@@ -81,12 +82,11 @@ impl Renderer {
             control,
             frames: 0,
             last_check: std::time::Instant::now(),
+            scale,
         }
     }
 
     pub fn run(mut self, mut simulation: Simulation, mut render_buffer: Vec<RenderParticle>) {
-        let visual_scale = 10_000.0;
-
         self.window.render_loop(move |mut frame_input| {
             let frame_span = Logger::create_frame_span(self.frames);
             let _entered = frame_span.enter();
@@ -111,7 +111,7 @@ impl Renderer {
                             rp.position[0],
                             rp.position[1],
                             rp.position[2],
-                        )) * Mat4::from_scale(visual_scale);
+                        )) * Mat4::from_scale(self.scale);
                     });
             }
 

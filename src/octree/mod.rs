@@ -12,7 +12,7 @@ pub struct Octree<T> {
     center_of_mass: Vector3,
 }
 
-impl<T: Copy> Octree<T> {
+impl<T> Octree<T> {
     pub fn new(boundary: Aabb, capacity: usize) -> Self {
         Self {
             boundary,
@@ -107,4 +107,6 @@ impl<T: Copy> Octree<T> {
 
         false
     }
+
+    pub fn propagate(&mut self) {}
 }

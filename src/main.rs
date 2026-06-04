@@ -82,7 +82,7 @@ fn main() {
     ];
 
     let simulation = Simulation::new(particles, world_bounds, particle_radius);
-    let renderer = Renderer::new(world_half_dimension, particle_count);
+    let renderer = Renderer::new(world_half_dimension, particle_count, 10_000.0);
 
     renderer.run(simulation, render_buffer);
 }
