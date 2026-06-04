@@ -1,6 +1,5 @@
 mod aabb;
 mod collision_solver;
-mod distribution;
 mod octree;
 mod particle;
 mod renderer;
@@ -14,9 +13,9 @@ use vector::Vector3;
 
 use crate::aabb::Aabb;
 use crate::collision_solver::CollisionSolver;
-use crate::distribution::splash_coordinates;
 use crate::particle::traits::Moving;
 use crate::renderer::particle::RenderParticle;
+use crate::vector::traits::Distributing;
 use crate::vector::traits::VectorOps;
 
 pub struct Simulation {
@@ -66,7 +65,7 @@ fn main() {
     let particle_radius = 12.0;
 
     let positions: Vec<Vector3> = (0..particle_count)
-        .map(|i| splash_coordinates(i, particle_count, world_half_dimension))
+        .map(|i| Vector3::splash_coordinates(i, particle_count, world_half_dimension))
         .collect();
 
     let particles: Vec<Particle> = positions
