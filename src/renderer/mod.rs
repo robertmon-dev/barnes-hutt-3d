@@ -12,8 +12,6 @@ use crate::{Simulation, renderer::particle::RenderParticle};
 #[derive(Hash, PartialEq, Eq)]
 pub enum BodyType {
     Body = 1,
-    Heavy = 2,
-    Idle = 3,
 }
 
 pub struct Renderer {

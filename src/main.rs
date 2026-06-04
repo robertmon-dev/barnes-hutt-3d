@@ -14,7 +14,7 @@ use vector::Vector3;
 use crate::aabb::Aabb;
 use crate::collision_solver::CollisionSolver;
 use crate::particle::traits::Moving;
-use crate::renderer::particle::RenderParticle;
+use crate::renderer::{Renderer, particle::RenderParticle};
 use crate::vector::traits::Distributing;
 use crate::vector::traits::VectorOps;
 
@@ -82,7 +82,7 @@ fn main() {
     ];
 
     let simulation = Simulation::new(particles, world_bounds, particle_radius);
-    let renderer = renderer::Renderer::new(world_half_dimension, particle_count);
+    let renderer = Renderer::new(world_half_dimension, particle_count);
 
     renderer.run(simulation, render_buffer);
 }
