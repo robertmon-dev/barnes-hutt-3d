@@ -13,7 +13,6 @@ use vector::Vector3;
 
 use crate::aabb::Aabb;
 use crate::collision_solver::CollisionSolver;
-use crate::logger::Logger;
 use crate::particle::traits::Moving;
 use crate::renderer::particle::RenderParticle;
 use crate::vector::traits::Distributing;
