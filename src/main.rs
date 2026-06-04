@@ -143,7 +143,7 @@ fn main() {
         frame_input
             .screen()
             .clear(ClearState::color_and_depth(0.05, 0.05, 0.05, 1.0, 1.0))
-            .render(&camera, &[&model], &[&light]);
+            .render(&camera, [&model], &[&light]);
 
         frames += 1;
         if last_check.elapsed().as_secs() >= 1 {
