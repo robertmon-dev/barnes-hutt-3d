@@ -21,11 +21,11 @@ use crate::vector::traits::VectorOps;
 pub struct Simulation {
     buffer: Vec<Particle>,
     world_bounds: Aabb,
-    particle_radius: f64,
+    particle_radius: f32,
 }
 
 impl Simulation {
-    pub fn new(buffer: Vec<Particle>, world_bounds: Aabb, particle_radius: f64) -> Self {
+    pub fn new(buffer: Vec<Particle>, world_bounds: Aabb, particle_radius: f32) -> Self {
         Self {
             buffer,
             world_bounds,
@@ -33,7 +33,7 @@ impl Simulation {
         }
     }
 
-    pub fn step(&mut self, dt: f64, render_buffer: &mut Vec<RenderParticle>) {
+    pub fn step(&mut self, dt: f32, render_buffer: &mut Vec<RenderParticle>) {
         self.buffer.par_iter_mut().for_each(|particle| {
             particle.update(dt);
         });
@@ -50,11 +50,7 @@ impl Simulation {
             .par_iter_mut()
             .zip(self.buffer.par_iter())
             .for_each(|(render_p, p)| {
-                render_p.position = [
-                    p.position.x as f32,
-                    p.position.y as f32,
-                    p.position.z as f32,
-                ];
+                render_p.position = [p.position.x, p.position.y, p.position.z];
             });
     }
 }
@@ -72,7 +68,7 @@ fn main() {
         .map(|pos| Particle::new(*pos, *pos, Vector3::zero(), 10.0, particle_radius))
         .collect();
 
-    let world_bounds = Aabb::new(Vector3::zero(), world_half_dimension as f64 * 3.0);
+    let world_bounds = Aabb::new(Vector3::zero(), world_half_dimension * 3.0);
 
     let render_buffer = vec![
         RenderParticle {

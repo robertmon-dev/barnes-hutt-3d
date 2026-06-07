@@ -11,14 +11,14 @@ pub trait VectorOps {
     fn cross(&self, other: &Self) -> Self;
     fn magnitude(&self) -> Self::Scalar;
     fn normalize(&self) -> Self;
-    fn angle_between<V: VectorOps<Scalar = f64>>(a: &V, b: &V) -> f64;
-    fn distance_to(&self, other: &Self) -> f64;
-    fn square(&self) -> f64;
+    fn angle_between<V: VectorOps<Scalar = f32>>(a: &V, b: &V) -> f32;
+    fn distance_to(&self, other: &Self) -> f32;
+    fn square(&self) -> f32;
     fn get_morton_code(&self, min_bound: Vector3, max_bound: Vector3) -> u64;
 }
 
 impl VectorOps for Vector3 {
-    type Scalar = f64;
+    type Scalar = f32;
 
     #[inline(always)]
     fn expand_bits(mut v: u64) -> u64 {
@@ -31,11 +31,11 @@ impl VectorOps for Vector3 {
         v
     }
 
-    fn dot(&self, other: &Self) -> f64 {
+    fn dot(&self, other: &Self) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    fn square(&self) -> f64 {
+    fn square(&self) -> f32 {
         self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 
@@ -47,7 +47,7 @@ impl VectorOps for Vector3 {
         }
     }
 
-    fn magnitude(&self) -> f64 {
+    fn magnitude(&self) -> f32 {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
 
@@ -64,19 +64,19 @@ impl VectorOps for Vector3 {
         }
     }
 
-    fn angle_between<V: VectorOps<Scalar = f64>>(a: &V, b: &V) -> f64 {
+    fn angle_between<V: VectorOps<Scalar = f32>>(a: &V, b: &V) -> f32 {
         let dot = a.dot(b);
         let mag_product = a.magnitude() * b.magnitude();
         (dot / mag_product).acos()
     }
 
-    fn distance_to(&self, other: &Self) -> f64 {
+    fn distance_to(&self, other: &Self) -> f32 {
         let diff = *self - *other;
         diff.magnitude()
     }
 
     fn get_morton_code(&self, min_bounds: Vector3, max_bounds: Vector3) -> u64 {
-        let max_val: f64 = ((1u64 << 21) - 1) as f64;
+        let max_val: f32 = ((1u64 << 21) - 1) as f32;
 
         let range_x = max_bounds.x - min_bounds.x;
         let range_y = max_bounds.y - min_bounds.y;
@@ -121,11 +121,11 @@ impl Reflector for Vector3 {
 }
 
 pub trait Kinetic {
-    fn kinetic_energy(&self, mass: f64) -> f64;
+    fn kinetic_energy(&self, mass: f32) -> f32;
 }
 
 impl Kinetic for Vector3 {
-    fn kinetic_energy(&self, mass: f64) -> f64 {
+    fn kinetic_energy(&self, mass: f32) -> f32 {
         self.magnitude().powi(2) * mass * 0.5
     }
 }
@@ -160,9 +160,9 @@ impl Distributing for Vector3 {
         let x_i = 2.0 * PI * x;
         let y_i = (1.0 - 2.0 * y).acos();
 
-        let x_c = (r * x_i.cos() * y_i.sin()) as f64;
-        let y_c = (r * y_i.sin() * x_i.sin()) as f64;
-        let z_c = (r * y_i.cos()) as f64;
+        let x_c = r * x_i.cos() * y_i.sin();
+        let y_c = r * y_i.sin() * x_i.sin();
+        let z_c = r * y_i.cos();
 
         Vector3::new(x_c, y_c, z_c)
     }
@@ -191,9 +191,9 @@ impl Distributing for Vector3 {
             let theta = randomizer.random_range(0.0..=2.0 * PI);
             let phi = randomizer.random_range(0.0..=2.0 * PI);
 
-            let x = ((r_out + r_inn * phi.cos()) * theta.cos()) as f64;
-            let y = ((r_out + r_inn * phi.cos()) * theta.sin()) as f64;
-            let z = (r_inn * phi.sin()) as f64;
+            let x = (r_out + r_inn * phi.cos()) * theta.cos();
+            let y = (r_out + r_inn * phi.cos()) * theta.sin();
+            let z = r_inn * phi.sin();
 
             bodies.push(Vector3::new(x, y, z));
         }

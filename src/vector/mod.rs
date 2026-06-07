@@ -1,8 +1,8 @@
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 pub mod conversions;
@@ -10,7 +10,7 @@ pub mod ops;
 pub mod traits;
 
 impl Vector3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
 
@@ -22,7 +22,7 @@ impl Vector3 {
         }
     }
 
-    pub fn splat(value: f64) -> Self {
+    pub fn splat(value: f32) -> Self {
         Self {
             x: value,
             y: value,

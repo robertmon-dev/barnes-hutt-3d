@@ -5,10 +5,10 @@ use crate::vector::Vector3;
 pub struct Octree<T> {
     boundary: Aabb,
     capacity: usize,
-    points: Vec<(Vector3, T, f64)>,
+    points: Vec<(Vector3, T, f32)>,
     children: Option<Box<[Octree<T>; 8]>>,
 
-    mass: f64,
+    mass: f32,
     center_of_mass: Vector3,
 }
 
@@ -26,7 +26,7 @@ impl<T> Octree<T> {
 
     pub fn query_with<F>(&self, range: &Aabb, func: &mut F)
     where
-        F: FnMut(&Vector3, &T, &f64),
+        F: FnMut(&Vector3, &T, &f32),
     {
         if !self.boundary.intersects(range) {
             return;
@@ -73,7 +73,7 @@ impl<T> Octree<T> {
         self.children = Some(Box::new(children_array));
     }
 
-    pub fn insert(&mut self, point: Vector3, data: T, mass: f64) -> bool {
+    pub fn insert(&mut self, point: Vector3, data: T, mass: f32) -> bool {
         let new_mass = self.mass + mass;
         self.center_of_mass = (self.center_of_mass * self.mass + point * mass) / new_mass;
         self.mass = new_mass;
@@ -96,7 +96,7 @@ impl<T> Octree<T> {
         self.insert_to_children(point, data, mass)
     }
 
-    fn insert_to_children(&mut self, point: Vector3, data: T, mass: f64) -> bool {
+    fn insert_to_children(&mut self, point: Vector3, data: T, mass: f32) -> bool {
         if let Some(ref mut children) = self.children {
             for child in children.iter_mut() {
                 if child.boundary.contains(point) {

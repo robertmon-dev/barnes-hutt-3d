@@ -6,9 +6,9 @@ pub struct Particle {
     pub last_position: Vector3,
 
     pub acceleration: Vector3,
-    pub mass: f64,
+    pub mass: f32,
     pub is_pinned: bool,
-    pub radius: f64,
+    pub radius: f32,
 }
 
 pub mod traits;
@@ -18,8 +18,8 @@ impl Particle {
         position: Vector3,
         last_position: Vector3,
         acceleration: Vector3,
-        mass: f64,
-        radius: f64,
+        mass: f32,
+        radius: f32,
     ) -> Self {
         Self {
             position,

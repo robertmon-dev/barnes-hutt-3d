@@ -3,12 +3,12 @@ use crate::vector::Vector3;
 use super::Particle;
 
 pub trait Moving {
-    fn update(&mut self, dt: f64);
+    fn update(&mut self, dt: f32);
     fn apply_force(&mut self, force: Vector3);
 }
 
 impl Moving for Particle {
-    fn update(&mut self, dt: f64) {
+    fn update(&mut self, dt: f32) {
         let velocity = self.position - self.last_position;
         let temp = self.position;
 

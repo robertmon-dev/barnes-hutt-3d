@@ -7,12 +7,12 @@ use crate::vector::Vector3;
 use crate::vector::traits::VectorOps;
 
 pub struct CollisionSolver {
-    pub particle_radius: f64,
+    pub particle_radius: f32,
     pub world_bounds: Aabb,
 }
 
 impl CollisionSolver {
-    pub fn new(particle_radius: f64, world_bounds: Aabb) -> Self {
+    pub fn new(particle_radius: f32, world_bounds: Aabb) -> Self {
         Self {
             particle_radius,
             world_bounds,
@@ -71,10 +71,10 @@ impl CollisionSolver {
                 let dot_v_sq = diff_dot_v.powi(2);
                 let v_diff_sq = v_diff.square();
 
-                let mut t: f64 = 0.0;
+                let mut t: f32 = 0.0;
                 if v_diff_sq != 0.0 {
                     t = (diff_dot_v
-                        + 0.0f64
+                        + 0.0f32
                             .max(dot_v_sq - v_diff_sq * (coll_dist_sq - curr_dist_sq))
                             .sqrt())
                         / v_diff_sq;

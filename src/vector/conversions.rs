@@ -7,14 +7,14 @@ impl Default for Vector3 {
     }
 }
 
-impl From<f64> for Vector3 {
-    fn from(val: f64) -> Self {
+impl From<f32> for Vector3 {
+    fn from(val: f32) -> Self {
         Self::splat(val)
     }
 }
 
-impl From<(f64, f64, f64)> for Vector3 {
-    fn from(tuple: (f64, f64, f64)) -> Self {
+impl From<(f32, f32, f32)> for Vector3 {
+    fn from(tuple: (f32, f32, f32)) -> Self {
         Self::new(tuple.0, tuple.1, tuple.2)
     }
 }

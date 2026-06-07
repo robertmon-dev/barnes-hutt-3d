@@ -3,11 +3,11 @@ use crate::vector::Vector3;
 #[derive(Debug, Clone, Copy)]
 pub struct Aabb {
     pub center: Vector3,
-    pub half_dimension: f64,
+    pub half_dimension: f32,
 }
 
 impl Aabb {
-    pub fn new(center: Vector3, half_dimension: f64) -> Self {
+    pub fn new(center: Vector3, half_dimension: f32) -> Self {
         Self {
             center,
             half_dimension,

@@ -13,10 +13,10 @@ impl Add<Vector3> for Vector3 {
     }
 }
 
-impl Add<f64> for Vector3 {
+impl Add<f32> for Vector3 {
     type Output = Self;
 
-    fn add(self, value: f64) -> Self::Output {
+    fn add(self, value: f32) -> Self::Output {
         Self {
             x: self.x + value,
             y: self.y + value,
@@ -25,7 +25,7 @@ impl Add<f64> for Vector3 {
     }
 }
 
-impl Mul<Vector3> for f64 {
+impl Mul<Vector3> for f32 {
     type Output = Vector3;
 
     fn mul(self, rhs: Vector3) -> Self::Output {
@@ -61,8 +61,8 @@ impl Sub<Vector3> for Vector3 {
     }
 }
 
-impl AddAssign<f64> for Vector3 {
-    fn add_assign(&mut self, rhs: f64) {
+impl AddAssign<f32> for Vector3 {
+    fn add_assign(&mut self, rhs: f32) {
         self.x += rhs;
         self.y += rhs;
         self.z += rhs;
@@ -81,10 +81,10 @@ impl Div<Vector3> for Vector3 {
     }
 }
 
-impl Div<f64> for Vector3 {
+impl Div<f32> for Vector3 {
     type Output = Vector3;
 
-    fn div(self, value: f64) -> Self::Output {
+    fn div(self, value: f32) -> Self::Output {
         Self {
             x: self.x / value,
             y: self.y / value,
@@ -93,10 +93,10 @@ impl Div<f64> for Vector3 {
     }
 }
 
-impl Mul<f64> for Vector3 {
+impl Mul<f32> for Vector3 {
     type Output = Vector3;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -117,8 +117,8 @@ impl Mul<Vector3> for Vector3 {
     }
 }
 
-impl MulAssign<f64> for Vector3 {
-    fn mul_assign(&mut self, rhs: f64) {
+impl MulAssign<f32> for Vector3 {
+    fn mul_assign(&mut self, rhs: f32) {
         self.x *= rhs;
         self.y *= rhs;
         self.z *= rhs;
@@ -134,7 +134,7 @@ impl MulAssign<Vector3> for Vector3 {
 }
 
 impl Index<usize> for Vector3 {
-    type Output = f64;
+    type Output = f32;
 
     fn index(&self, index: usize) -> &Self::Output {
         match index {
