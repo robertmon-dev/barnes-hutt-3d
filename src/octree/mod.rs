@@ -2,6 +2,8 @@ use crate::aabb::Aabb;
 use crate::particle::Moving;
 use crate::vector::Vector3;
 
+use std::collections::VecDeque;
+
 #[derive(Debug, Clone)]
 pub struct Octree<T>
 where
@@ -165,6 +167,27 @@ where
 
                 if self.mass > 0.0 {
                     self.center_of_mass -= Vector3::splat(self.mass);
+                }
+            }
+        }
+    }
+
+    pub fn accelerate(&mut self, i: usize, theta: f32, epsilon: f32) {
+        let mut new_acceleration = Vector3::zero();
+
+        let t_sq = theta.powi(2);
+        let e_sq = epsilon.powi(2);
+
+        let mut nodes_to_visit: Vec<&mut Octree<T>> = Vec::new();
+        nodes_to_visit.push(self);
+
+        while let Some(node) = nodes_to_visit.pop() {
+            if node.is_leaf {
+            } else if let Some(ref mut children) = node.children {
+                for child in children.iter_mut() {
+                    if child.mass > 0.0 {
+                        nodes_to_visit.push(child);
+                    }
                 }
             }
         }
