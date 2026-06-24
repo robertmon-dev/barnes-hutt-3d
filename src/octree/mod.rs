@@ -8,6 +8,7 @@ pub struct Octree<T> {
     points: Vec<(Vector3, T, f32)>,
     children: Option<Box<[Octree<T>; 8]>>,
 
+    is_leaf: bool,
     mass: f32,
     center_of_mass: Vector3,
 }
@@ -19,6 +20,7 @@ impl<T> Octree<T> {
             capacity,
             points: Vec::with_capacity(8),
             children: None,
+            is_leaf: true,
             mass: 0.0,
             center_of_mass: Vector3::zero(),
         }
@@ -108,5 +110,55 @@ impl<T> Octree<T> {
         false
     }
 
-    pub fn propagate(&mut self) {}
+    pub fn propagate(&mut self) {
+        let mut total_mass = 0.0;
+
+        let mut total_x = 0.0;
+        let mut total_y = 0.0;
+        let mut total_z = 0.0;
+
+        let mut center_of_mass = Vector3::new(total_x, total_y, total_z);
+
+        if self.is_leaf {
+            if self.children.is_none() {
+                self.mass = total_mass;
+                self.center_of_mass = center_of_mass;
+            } else {
+                for point in self.points.iter() {
+                    total_mass += point.2;
+
+                    total_x += point.0.x * point.2;
+                    total_y += point.0.y * point.2;
+                    total_z += point.0.z * point.2;
+                }
+
+                self.mass = total_mass;
+                self.center_of_mass = Vector3::new(
+                    total_x / total_mass,
+                    total_y / total_mass,
+                    total_z / total_mass,
+                );
+            }
+        } else {
+            if self.children.is_none() {
+                return;
+            }
+
+            if let Some(ref mut children) = self.children {
+                for child in children.iter_mut() {
+                    child.propagate();
+
+                    center_of_mass += child.center_of_mass * child.mass;
+                    total_mass += child.mass;
+                }
+
+                self.mass = total_mass;
+                self.center_of_mass = center_of_mass;
+
+                if self.mass > 0.0 {
+                    self.center_of_mass -= Vector3::splat(self.mass);
+                }
+            }
+        }
+    }
 }
