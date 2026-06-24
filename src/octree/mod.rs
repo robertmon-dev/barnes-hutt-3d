@@ -80,6 +80,7 @@ where
         });
 
         self.children = Some(Box::new(children_array));
+        self.is_leaf = false;
     }
 
     pub fn insert(&mut self, point: Vector3, data: T, mass: f32) -> bool {
