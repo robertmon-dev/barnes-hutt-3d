@@ -3,8 +3,6 @@ use crate::particle::Moving;
 use crate::vector::Vector3;
 use crate::vector::traits::VectorOps;
 
-use std::collections::VecDeque;
-
 #[derive(Debug, Clone)]
 pub struct Octree<T>
 where
