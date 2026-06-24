@@ -1,6 +1,7 @@
 use crate::aabb::Aabb;
 use crate::particle::Moving;
 use crate::vector::Vector3;
+use crate::vector::traits::VectorOps;
 
 use std::collections::VecDeque;
 
@@ -172,7 +173,7 @@ where
         }
     }
 
-    pub fn accelerate(&mut self, i: usize, theta: f32, epsilon: f32) {
+    pub fn accelerate(&mut self, target_pos: Vector3, theta: f32, epsilon: f32) {
         let mut new_acceleration = Vector3::zero();
 
         let t_sq = theta.powi(2);
@@ -182,7 +183,16 @@ where
         nodes_to_visit.push(self);
 
         while let Some(node) = nodes_to_visit.pop() {
-            if node.is_leaf {
+            let r = node.center_of_mass - target_pos;
+            let dist_sq = r.square();
+
+            if dist_sq == 0.0 {
+                continue;
+            }
+
+            let s_sq = (node.boundary.half_dimension * 2.0).powi(2);
+
+            if node.is_leaf || (s_sq / dist_sq) < t_sq {
             } else if let Some(ref mut children) = node.children {
                 for child in children.iter_mut() {
                     if child.mass > 0.0 {
