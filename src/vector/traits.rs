@@ -168,7 +168,7 @@ impl Distributing for Vector3 {
     }
 
     fn splash_coordinates(i: usize, n: usize, r: f32) -> Vector3 {
-        let default_phi = (1.0 + 2.0_f32.sqrt()) / 2.0;
+        let default_phi = (1.0 + 3.0_f32.sqrt()) / 2.0;
         let default_epsilon = 0.0;
         Self::splash_coordinates_with_phi_epsilon(i, n, default_phi, default_epsilon, r)
     }
