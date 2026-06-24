@@ -35,6 +35,7 @@ impl Particle {
 pub trait Moving {
     fn get_velocity(&self) -> Vector3;
     fn set_velocity(&mut self, vel: Vector3);
+    fn set_acceleration(&mut self, acc: Vector3);
 }
 
 impl Moving for Particle {
@@ -44,5 +45,9 @@ impl Moving for Particle {
 
     fn set_velocity(&mut self, vel: Vector3) {
         self.last_position = self.position - vel;
+    }
+
+    fn set_acceleration(&mut self, acc: Vector3) {
+        self.acceleration = acc;
     }
 }

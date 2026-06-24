@@ -1,8 +1,12 @@
 use crate::aabb::Aabb;
+use crate::particle::Moving;
 use crate::vector::Vector3;
 
 #[derive(Debug, Clone)]
-pub struct Octree<T> {
+pub struct Octree<T>
+where
+    T: Moving,
+{
     boundary: Aabb,
     capacity: usize,
     points: Vec<(Vector3, T, f32)>,
@@ -13,7 +17,10 @@ pub struct Octree<T> {
     center_of_mass: Vector3,
 }
 
-impl<T> Octree<T> {
+impl<T> Octree<T>
+where
+    T: Moving,
+{
     pub fn new(boundary: Aabb, capacity: usize) -> Self {
         Self {
             boundary,
