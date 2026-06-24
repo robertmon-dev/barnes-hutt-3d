@@ -2,7 +2,7 @@ use rayon::prelude::*;
 
 use crate::aabb::Aabb;
 use crate::octree::Octree;
-use crate::particle::{Moving, Particle};
+use crate::particle::{Particle, traits::Moving};
 use crate::vector::Vector3;
 use crate::vector::traits::VectorOps;
 

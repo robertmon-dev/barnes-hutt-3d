@@ -1,5 +1,5 @@
 use crate::aabb::Aabb;
-use crate::particle::Moving;
+use crate::particle::traits::Moving;
 use crate::vector::Vector3;
 use crate::vector::traits::VectorOps;
 
