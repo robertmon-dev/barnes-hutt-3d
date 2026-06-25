@@ -30,4 +30,13 @@ impl Particle {
             radius,
         }
     }
+
+    pub fn extends(&self, min_bound: Vector3, max_bound: Vector3) -> bool {
+        self.position.x >= min_bound.x + self.radius
+            && self.position.x <= max_bound.x - self.radius
+            && self.position.y >= min_bound.y + self.radius
+            && self.position.y <= max_bound.y - self.radius
+            && self.position.z >= min_bound.z + self.radius
+            && self.position.z <= max_bound.z - self.radius
+    }
 }

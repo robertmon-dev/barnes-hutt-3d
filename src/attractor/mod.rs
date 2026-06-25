@@ -50,16 +50,7 @@ impl Attractor {
             particle.add_acceleration(new_acc);
         });
 
-        let pr = self.particle_radius;
-
-        particles.retain(|p| {
-            p.position.x >= min_bound.x + pr
-                && p.position.x <= max_bound.x - pr
-                && p.position.y >= min_bound.y + pr
-                && p.position.y <= max_bound.y - pr
-                && p.position.z >= min_bound.z + pr
-                && p.position.z <= max_bound.z - pr
-        });
+        particles.retain(|p| p.extends(min_bound, max_bound));
     }
 
     fn solve_pair(particle: &mut Particle, other: &Particle) {
