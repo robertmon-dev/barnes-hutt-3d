@@ -59,7 +59,7 @@ fn main() {
     logger::Logger::init();
 
     let world_half_dimension = 1000000.0 * 10.0;
-    let particle_count = 100000;
+    let particle_count = 10000;
     let particle_radius = 12.0;
 
     let positions = Vector3::distribute_across_the_sphere(particle_count, world_half_dimension);

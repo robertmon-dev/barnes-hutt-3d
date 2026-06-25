@@ -29,6 +29,8 @@ impl Attractor {
             tree.insert(particle.position, *particle, particle.mass);
         }
 
+        tree.propagate();
+
         let h = self.world_bounds.half_dimension;
         let min_bound = self.world_bounds.center - Vector3::new(h, h, h);
         let max_bound = self.world_bounds.center + Vector3::new(h, h, h);

@@ -129,7 +129,7 @@ where
         let mut center_of_mass = Vector3::new(total_x, total_y, total_z);
 
         if self.is_leaf {
-            if self.children.is_none() {
+            if self.points.is_empty() {
                 self.mass = total_mass;
                 self.center_of_mass = center_of_mass;
             } else {
@@ -165,7 +165,7 @@ where
                 self.center_of_mass = center_of_mass;
 
                 if self.mass > 0.0 {
-                    self.center_of_mass -= Vector3::splat(self.mass);
+                    self.center_of_mass = center_of_mass / total_mass;
                 }
             }
         }
