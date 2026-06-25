@@ -36,8 +36,8 @@ impl Attractor {
         particles.par_iter_mut().for_each(|particle| {
             let query_range = Aabb::new(particle.position, search_radius);
 
-            tree.query_with(&query_range, &mut |_, other_p, _| {
-                Self::solve_pair(particle, other_p);
+            tree.query_with(&query_range, &mut |_, other, _| {
+                Self::solve_pair(particle, other);
             });
 
             let new_acc = tree.accelerate(
@@ -62,14 +62,14 @@ impl Attractor {
         });
     }
 
-    fn solve_pair(particle: &mut Particle, other_p: &Particle) {
-        if std::ptr::eq(particle, other_p) {
+    fn solve_pair(particle: &mut Particle, other: &Particle) {
+        if std::ptr::eq(particle, other) {
             return;
         }
 
-        let diff_pos = other_p.position - particle.position;
-        let coll_dist = particle.radius + other_p.radius;
-        let curr_dist = particle.position.distance_to(&other_p.position);
+        let diff_pos = other.position - particle.position;
+        let coll_dist = particle.radius + other.radius;
+        let curr_dist = particle.position.distance_to(&other.position);
 
         if curr_dist >= coll_dist || curr_dist == 0.0 {
             return;
@@ -80,13 +80,13 @@ impl Attractor {
         let response = overlap * d_norm;
 
         let v0 = particle.get_velocity();
-        let v1 = other_p.get_velocity();
+        let v1 = other.get_velocity();
 
         let v_diff = v1 - v0;
         let diff_dot_v = diff_pos.dot(&v_diff);
 
-        let total_m = particle.mass + other_p.mass;
-        let weight1 = other_p.mass / total_m;
+        let total_m = particle.mass + other.mass;
+        let weight1 = other.mass / total_m;
 
         if diff_dot_v >= 0.0 {
             particle.position -= weight1 * response;
@@ -109,7 +109,7 @@ impl Attractor {
 
         particle.position -= v0 * t;
 
-        let normal = particle.position - other_p.position;
+        let normal = particle.position - other.position;
         let normal_sq = normal.square();
 
         let v_rel = v0 - v1;
@@ -117,7 +117,7 @@ impl Attractor {
         let impulse = (2.0 * dot) / (total_m * normal_sq);
 
         if dot < 0.0 && normal_sq != 0.0 {
-            let v0_new = v0 - impulse * other_p.mass * normal;
+            let v0_new = v0 - impulse * other.mass * normal;
             particle.set_velocity(v0_new);
 
             particle.position += v0_new * t;
