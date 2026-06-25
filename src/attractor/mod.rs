@@ -26,7 +26,9 @@ impl Attractor {
 
         let mut tree: Octree<Particle> = Octree::new(self.world_bounds, 200);
         for particle in particles.iter() {
-            tree.insert(particle.position, *particle, particle.mass);
+            if !particle.dead {
+                tree.insert(particle.position, *particle, particle.mass);
+            }
         }
 
         tree.propagate();
@@ -36,6 +38,15 @@ impl Attractor {
         let max_bound = self.world_bounds.center + Vector3::new(h, h, h);
 
         particles.par_iter_mut().for_each(|particle| {
+            if particle.dead {
+                return;
+            }
+
+            if !particle.extends(min_bound, max_bound) {
+                particle.dead = true;
+                return;
+            }
+
             let query_range = Aabb::new(particle.position, search_radius);
 
             tree.query_with(&query_range, &mut |_, other, _| {
@@ -51,8 +62,6 @@ impl Attractor {
             );
             particle.add_acceleration(new_acc);
         });
-
-        particles.retain(|p| p.extends(min_bound, max_bound));
     }
 
     fn solve_pair(particle: &mut Particle, other: &Particle) {

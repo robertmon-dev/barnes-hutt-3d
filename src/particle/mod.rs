@@ -9,6 +9,7 @@ pub struct Particle {
     pub mass: f32,
     pub is_pinned: bool,
     pub radius: f32,
+    pub dead: bool,
 }
 
 pub mod traits;
@@ -28,6 +29,7 @@ impl Particle {
             mass,
             is_pinned: false,
             radius,
+            dead: false,
         }
     }
 
