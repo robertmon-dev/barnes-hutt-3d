@@ -171,7 +171,7 @@ where
         }
     }
 
-    pub fn accelerate(
+    pub fn calculate_acceleration(
         &self,
         target_pos: Vector3,
         theta: f32,

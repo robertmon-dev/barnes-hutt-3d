@@ -40,7 +40,7 @@ impl Attractor {
                 Self::solve_pair(particle, other);
             });
 
-            let new_acc = tree.accelerate(
+            let new_acc = tree.calculate_acceleration(
                 particle.position,
                 consts::THETA,
                 consts::EPSILON,
