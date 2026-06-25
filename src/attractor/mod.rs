@@ -19,9 +19,8 @@ impl Attractor {
         }
     }
 
-    pub fn solve_collisions(&self, particles: &mut [Particle]) {
+    pub fn update(&self, particles: &mut Vec<Particle>, dt: f32) {
         let search_radius = self.particle_radius * 2.0;
-        let restitution = 0.8;
 
         let mut tree: Octree<Particle> = Octree::new(self.world_bounds, 200);
         for particle in particles.iter() {
@@ -38,44 +37,17 @@ impl Attractor {
             tree.query_with(&query_range, &mut |_, other_p, _| {
                 Self::solve_pair(particle, other_p);
             });
+        });
 
-            let mut v = particle.get_velocity();
-            let mut bounced = false;
-            let pr = particle.radius;
+        let pr = self.particle_radius;
 
-            if particle.position.x < min_bound.x + pr {
-                particle.position.x = min_bound.x + pr;
-                v.x = v.x.abs() * restitution;
-                bounced = true;
-            } else if particle.position.x > max_bound.x - pr {
-                particle.position.x = max_bound.x - pr;
-                v.x = -v.x.abs() * restitution;
-                bounced = true;
-            }
-
-            if particle.position.y < min_bound.y + pr {
-                particle.position.y = min_bound.y + pr;
-                v.y = v.y.abs() * restitution;
-                bounced = true;
-            } else if particle.position.y > max_bound.y - pr {
-                particle.position.y = max_bound.y - pr;
-                v.y = -v.y.abs() * restitution;
-                bounced = true;
-            }
-
-            if particle.position.z < min_bound.z + pr {
-                particle.position.z = min_bound.z + pr;
-                v.z = v.z.abs() * restitution;
-                bounced = true;
-            } else if particle.position.z > max_bound.z - pr {
-                particle.position.z = max_bound.z - pr;
-                v.z = -v.z.abs() * restitution;
-                bounced = true;
-            }
-
-            if bounced {
-                particle.set_velocity(v);
-            }
+        particles.retain(|p| {
+            p.position.x >= min_bound.x + pr
+                && p.position.x <= max_bound.x - pr
+                && p.position.y >= min_bound.y + pr
+                && p.position.y <= max_bound.y - pr
+                && p.position.z >= min_bound.z + pr
+                && p.position.z <= max_bound.z - pr
         });
     }
 

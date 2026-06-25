@@ -44,7 +44,7 @@ impl Simulation {
         });
 
         let attractor = Attractor::new(self.particle_radius, self.world_bounds);
-        attractor.solve_collisions(&mut self.buffer);
+        attractor.update(&mut self.buffer, dt);
 
         render_buffer
             .par_iter_mut()
