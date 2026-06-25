@@ -47,7 +47,7 @@ impl Attractor {
                 consts::G_CONST,
                 consts::MAX_FACTOR,
             );
-            particle.set_acceleration(new_acc);
+            particle.add_acceleration(new_acc);
         });
 
         let pr = self.particle_radius;

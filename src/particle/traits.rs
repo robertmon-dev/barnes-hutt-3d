@@ -3,6 +3,7 @@ use crate::vector::Vector3;
 use super::Particle;
 
 pub trait Moving {
+    fn add_acceleration(&mut self, acc: Vector3);
     fn get_velocity(&self) -> Vector3;
     fn set_velocity(&mut self, vel: Vector3);
     fn set_acceleration(&mut self, acc: Vector3);
@@ -11,6 +12,10 @@ pub trait Moving {
 }
 
 impl Moving for Particle {
+    fn add_acceleration(&mut self, acc: Vector3) {
+        self.acceleration += acc;
+    }
+
     fn get_velocity(&self) -> Vector3 {
         self.position - self.last_position
     }
