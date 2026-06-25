@@ -44,7 +44,7 @@ impl Renderer {
             vec3(0.0, 1.0, 0.0),
             degrees(45.0),
             1.0,
-            world_half_dimension * 20.0,
+            world_half_dimension * 200.0,
         );
 
         let cpu_mesh = CpuMesh::sphere(8);

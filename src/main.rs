@@ -51,6 +51,7 @@ impl Simulation {
             .zip(self.buffer.par_iter())
             .for_each(|(render_p, p)| {
                 render_p.position = [p.position.x, p.position.y, p.position.z];
+                render_p.dead = p.dead
             });
     }
 }
@@ -72,7 +73,8 @@ fn main() {
 
     let render_buffer = vec![
         RenderParticle {
-            position: [0.0, 0.0, 0.0]
+            position: [0.0, 0.0, 0.0],
+            dead: false
         };
         particle_count
     ];
