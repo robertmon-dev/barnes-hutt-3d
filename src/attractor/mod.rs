@@ -1,5 +1,7 @@
 use rayon::prelude::*;
 
+pub mod consts;
+
 use crate::aabb::Aabb;
 use crate::octree::Octree;
 use crate::particle::{Particle, traits::Moving};
@@ -37,6 +39,15 @@ impl Attractor {
             tree.query_with(&query_range, &mut |_, other_p, _| {
                 Self::solve_pair(particle, other_p);
             });
+
+            let new_acc = tree.accelerate(
+                particle.position,
+                consts::THETA,
+                consts::EPSILON,
+                consts::G_CONST,
+                consts::MAX_FACTOR,
+            );
+            particle.set_acceleration(new_acc);
         });
 
         let pr = self.particle_radius;

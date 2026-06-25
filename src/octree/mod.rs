@@ -172,7 +172,7 @@ where
     }
 
     pub fn accelerate(
-        &mut self,
+        &self,
         target_pos: Vector3,
         theta: f32,
         epsilon: f32,
@@ -184,7 +184,7 @@ where
         let t_sq = theta.powi(2);
         let e_sq = epsilon.powi(2);
 
-        let mut nodes_to_visit: Vec<&mut Octree<T>> = Vec::new();
+        let mut nodes_to_visit: Vec<&Octree<T>> = Vec::new();
         nodes_to_visit.push(self);
 
         while let Some(node) = nodes_to_visit.pop() {
@@ -215,8 +215,8 @@ where
                 }
 
                 total_acceleration += d * factor;
-            } else if let Some(ref mut children) = node.children {
-                for child in children.iter_mut() {
+            } else if let Some(ref children) = node.children {
+                for child in children.iter() {
                     if child.mass > 0.0 {
                         nodes_to_visit.push(child);
                     }
