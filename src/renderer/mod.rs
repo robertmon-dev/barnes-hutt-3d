@@ -107,11 +107,15 @@ impl Renderer {
                     .par_iter()
                     .zip(instances.transformations.par_iter_mut())
                     .for_each(|(rp, t)| {
-                        *t = Mat4::from_translation(vec3(
-                            rp.position[0],
-                            rp.position[1],
-                            rp.position[2],
-                        )) * Mat4::from_scale(self.scale);
+                        if rp.dead {
+                            *t = Mat4::from_scale(0.0);
+                        } else {
+                            *t = Mat4::from_translation(vec3(
+                                rp.position[0],
+                                rp.position[1],
+                                rp.position[2],
+                            )) * Mat4::from_scale(self.scale);
+                        }
                     });
             }
 
