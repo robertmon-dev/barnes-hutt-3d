@@ -1,5 +1,5 @@
 mod aabb;
-mod collision_solver;
+mod attractor;
 mod logger;
 mod octree;
 mod particle;
@@ -12,7 +12,7 @@ use rayon::prelude::*;
 use vector::Vector3;
 
 use crate::aabb::Aabb;
-use crate::collision_solver::CollisionSolver;
+use crate::attractor::Attractor;
 use crate::particle::traits::Moving;
 use crate::renderer::{Renderer, particle::RenderParticle};
 use crate::vector::traits::Distributing;
@@ -43,8 +43,8 @@ impl Simulation {
             p.position.get_morton_code(world_min_bound, world_max_bound)
         });
 
-        let collision_solver = CollisionSolver::new(self.particle_radius, self.world_bounds);
-        collision_solver.solve_collisions(&mut self.buffer);
+        let attractor = Attractor::new(self.particle_radius, self.world_bounds);
+        attractor.solve_collisions(&mut self.buffer);
 
         render_buffer
             .par_iter_mut()
