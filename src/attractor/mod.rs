@@ -74,6 +74,12 @@ impl Attractor {
             })
             .flatten()
             .collect();
+
+        for corr in corrections {
+            if let Some(particle) = particles.get_mut(corr.index) {
+                particle.apply_correction(corr);
+            }
+        }
     }
 
     fn solve_pair(particle: &mut Particle, other: &Particle, index: usize) -> Correction {

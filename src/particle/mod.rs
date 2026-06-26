@@ -1,4 +1,7 @@
-use crate::vector::Vector3;
+use crate::{
+    attractor::correction::{self, Correction},
+    vector::Vector3,
+};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Particle {
@@ -40,5 +43,15 @@ impl Particle {
             && self.position.y <= max_bound.y - self.radius
             && self.position.z >= min_bound.z + self.radius
             && self.position.z <= max_bound.z - self.radius
+    }
+
+    pub fn apply_correction(&mut self, correction: Correction) {
+        if let Some(position) = correction.position {
+            self.position += position;
+        }
+
+        if let Some(last_position) = correction.last_position {
+            self.last_position += last_position;
+        }
     }
 }
