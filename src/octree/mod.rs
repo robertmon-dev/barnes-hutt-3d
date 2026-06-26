@@ -10,6 +10,8 @@ where
 {
     boundary: Aabb,
     capacity: usize,
+    depth: usize,
+    max_depth: usize,
     points: Vec<(Vector3, T, f32)>,
     children: Option<Box<[Octree<T>; 8]>>,
 
@@ -22,10 +24,12 @@ impl<T> Octree<T>
 where
     T: Moving,
 {
-    pub fn new(boundary: Aabb, capacity: usize) -> Self {
+    pub fn new(boundary: Aabb, capacity: usize, depth: usize, max_depth: usize) -> Self {
         Self {
             boundary,
             capacity,
+            depth,
+            max_depth,
             points: Vec::with_capacity(8),
             children: None,
             is_leaf: true,
@@ -70,6 +74,7 @@ where
             Vector3::new(h, h, h),
         ];
 
+        let next_depth = self.depth + 1;
         let children_array: [Octree<T>; 8] = std::array::from_fn(|i| {
             Octree::new(
                 Aabb {
@@ -77,6 +82,8 @@ where
                     half_dimension: h,
                 },
                 self.capacity,
+                next_depth,
+                self.max_depth,
             )
         });
 
@@ -85,7 +92,9 @@ where
     }
 
     pub fn insert(&mut self, point: Vector3, data: T, mass: f32) -> bool {
-        if self.points.len() < self.capacity && self.children.is_none() {
+        if (self.points.len() < self.capacity || self.depth >= self.max_depth)
+            && self.children.is_none()
+        {
             self.points.push((point, data, mass));
             return true;
         }
