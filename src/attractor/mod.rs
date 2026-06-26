@@ -21,7 +21,7 @@ impl Attractor {
         }
     }
 
-    pub fn update(&self, particles: &mut Vec<Particle>, dt: f32) {
+    pub fn update(&self, particles: &mut Vec<Particle>) {
         let search_radius = self.particle_radius * 2.0;
 
         let mut tree: Octree<Particle> = Octree::new(self.world_bounds, 200);

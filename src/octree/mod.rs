@@ -85,10 +85,6 @@ where
     }
 
     pub fn insert(&mut self, point: Vector3, data: T, mass: f32) -> bool {
-        let new_mass = self.mass + mass;
-        self.center_of_mass = (self.center_of_mass * self.mass + point * mass) / new_mass;
-        self.mass = new_mass;
-
         if self.points.len() < self.capacity && self.children.is_none() {
             self.points.push((point, data, mass));
             return true;
