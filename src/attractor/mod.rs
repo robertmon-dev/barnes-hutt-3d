@@ -26,7 +26,7 @@ impl Attractor {
     pub fn update(&self, particles: &mut Vec<Particle>) {
         let search_radius = self.particle_radius * 2.0;
 
-        let mut tree: Octree<Particle> = Octree::new(self.world_bounds, 200);
+        let mut tree: Octree<Particle> = Octree::new(self.world_bounds, 200, 0, consts::TREE_DEPTH);
         for particle in particles.iter() {
             if !particle.dead {
                 tree.insert(particle.position, *particle, particle.mass);
