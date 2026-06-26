@@ -127,9 +127,15 @@ impl Attractor {
         let v0_new = v0 - impulse * other.mass * normal;
 
         if dot < 0.0 && normal_sq != 0.0 {
-            Correction::new(t, v0, v0_new, Some(v0_new * t), Some(v0_new * t))
+            Correction::new(
+                t,
+                v0,
+                v0_new,
+                Some((v0_new * t) - (v0 * t)),
+                Some(v0_new * t),
+            )
         } else {
-            Correction::new(t, v0, v0_new, Some(v0_new * t), None)
+            Correction::new(t, v0, v0_new, Some((v0_new * t) - (v0 * t)), None)
         }
     }
 }
