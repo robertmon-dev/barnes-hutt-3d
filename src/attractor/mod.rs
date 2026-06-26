@@ -1,8 +1,10 @@
 use rayon::prelude::*;
 
 pub mod consts;
+pub mod correction;
 
 use crate::aabb::Aabb;
+use crate::attractor::correction::Correction;
 use crate::octree::Octree;
 use crate::particle::{Particle, traits::Moving};
 use crate::vector::Vector3;
@@ -64,9 +66,9 @@ impl Attractor {
         });
     }
 
-    fn solve_pair(particle: &mut Particle, other: &Particle) {
+    fn solve_pair(particle: &mut Particle, other: &Particle) -> Correction {
         if std::ptr::eq(particle, other) {
-            return;
+            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None);
         }
 
         let diff_pos = other.position - particle.position;
@@ -74,7 +76,7 @@ impl Attractor {
         let curr_dist = particle.position.distance_to(&other.position);
 
         if curr_dist >= coll_dist || curr_dist == 0.0 {
-            return;
+            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None);
         }
 
         let overlap = coll_dist - curr_dist;
@@ -91,8 +93,13 @@ impl Attractor {
         let weight1 = other.mass / total_m;
 
         if diff_dot_v >= 0.0 {
-            particle.position -= weight1 * response;
-            return;
+            return Correction::new(
+                0.0,
+                Vector3::zero(),
+                Vector3::zero(),
+                Some(weight1 * response),
+                None,
+            );
         }
 
         let curr_dist_sq = curr_dist.powi(2);
@@ -117,15 +124,12 @@ impl Attractor {
         let v_rel = v0 - v1;
         let dot = v_rel.dot(&normal);
         let impulse = (2.0 * dot) / (total_m * normal_sq);
+        let v0_new = v0 - impulse * other.mass * normal;
 
         if dot < 0.0 && normal_sq != 0.0 {
-            let v0_new = v0 - impulse * other.mass * normal;
-            particle.set_velocity(v0_new);
-
-            particle.position += v0_new * t;
-            particle.last_position += v0_new * t;
+            Correction::new(t, v0, v0_new, Some(v0_new * t), Some(v0_new * t))
         } else {
-            particle.position += v0 * t;
+            Correction::new(t, v0, v0_new, Some(v0_new * t), None)
         }
     }
 }
