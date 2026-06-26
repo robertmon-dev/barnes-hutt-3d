@@ -63,7 +63,11 @@ fn main() {
     let particle_count = 100000;
     let particle_radius = 12.0;
 
-    let positions = Vector3::distribute_across_the_sphere(particle_count, world_half_dimension);
+    let positions = Vector3::distribute_across_the_torus(
+        particle_count,
+        world_half_dimension,
+        world_half_dimension / 2.0,
+    );
     let particles: Vec<Particle> = positions
         .iter()
         .map(|pos| Particle::new(*pos, *pos, Vector3::zero(), 10.0, particle_radius))
