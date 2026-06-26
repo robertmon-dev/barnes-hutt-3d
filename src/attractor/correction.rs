@@ -1,11 +1,12 @@
 use crate::vector::Vector3;
 
 pub struct Correction {
-    t: f32,
-    v0: Vector3,
-    v0_new: Vector3,
-    position: Option<Vector3>,
-    last_position: Option<Vector3>,
+    pub t: f32,
+    pub v0: Vector3,
+    pub v0_new: Vector3,
+    pub position: Option<Vector3>,
+    pub last_position: Option<Vector3>,
+    pub index: usize,
 }
 
 impl Correction {
@@ -15,6 +16,7 @@ impl Correction {
         v0_new: Vector3,
         position: Option<Vector3>,
         last_position: Option<Vector3>,
+        index: usize,
     ) -> Self {
         Self {
             t,
@@ -22,6 +24,7 @@ impl Correction {
             v0_new,
             position,
             last_position,
+            index,
         }
     }
 }

@@ -39,38 +39,46 @@ impl Attractor {
         let min_bound = self.world_bounds.center - Vector3::new(h, h, h);
         let max_bound = self.world_bounds.center + Vector3::new(h, h, h);
 
-        particles.par_iter_mut().for_each(|particle| {
-            if particle.dead {
-                return;
-            }
+        let corrections: Vec<Correction> = particles
+            .par_iter_mut()
+            .enumerate()
+            .map(|(index, particle)| {
+                if particle.dead {
+                    return Vec::new();
+                }
 
-            if !particle.extends(min_bound, max_bound) {
-                particle.dead = true;
-                return;
-            }
+                if !particle.extends(min_bound, max_bound) {
+                    particle.dead = true;
+                    return Vec::new();
+                }
 
-            let query_range = Aabb::new(particle.position, search_radius);
-            let mut corrections = Vec::new();
+                let query_range = Aabb::new(particle.position, search_radius);
 
-            tree.query_with(&query_range, &mut |_, other, _| {
-                let correction = Self::solve_pair(particle, other);
-                corrections.push(correction);
-            });
+                let mut local_corrections = Vec::new();
 
-            let new_acc = tree.calculate_acceleration(
-                particle.position,
-                consts::THETA,
-                consts::EPSILON,
-                consts::G_CONST,
-                consts::MAX_FACTOR,
-            );
-            particle.add_acceleration(new_acc);
-        });
+                tree.query_with(&query_range, &mut |_, other, _| {
+                    let correction = Self::solve_pair(particle, other, index);
+                    local_corrections.push(correction);
+                });
+
+                let new_acc = tree.calculate_acceleration(
+                    particle.position,
+                    consts::THETA,
+                    consts::EPSILON,
+                    consts::G_CONST,
+                    consts::MAX_FACTOR,
+                );
+                particle.add_acceleration(new_acc);
+
+                local_corrections
+            })
+            .flatten()
+            .collect();
     }
 
-    fn solve_pair(particle: &mut Particle, other: &Particle) -> Correction {
+    fn solve_pair(particle: &mut Particle, other: &Particle, index: usize) -> Correction {
         if std::ptr::eq(particle, other) {
-            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None);
+            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None, index);
         }
 
         let diff_pos = other.position - particle.position;
@@ -78,7 +86,7 @@ impl Attractor {
         let curr_dist = particle.position.distance_to(&other.position);
 
         if curr_dist >= coll_dist || curr_dist == 0.0 {
-            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None);
+            return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None, index);
         }
 
         let overlap = coll_dist - curr_dist;
@@ -101,6 +109,7 @@ impl Attractor {
                 Vector3::zero(),
                 Some(weight1 * response),
                 None,
+                index,
             );
         }
 
@@ -133,9 +142,10 @@ impl Attractor {
                 v0_new,
                 Some((v0_new * t) - (v0 * t)),
                 Some(v0_new * t),
+                index,
             )
         } else {
-            Correction::new(t, v0, v0_new, Some((v0_new * t) - (v0 * t)), None)
+            Correction::new(t, v0, v0_new, Some((v0_new * t) - (v0 * t)), None, index)
         }
     }
 }
