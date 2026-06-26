@@ -50,9 +50,11 @@ impl Attractor {
             }
 
             let query_range = Aabb::new(particle.position, search_radius);
+            let mut corrections = Vec::new();
 
             tree.query_with(&query_range, &mut |_, other, _| {
-                Self::solve_pair(particle, other);
+                let correction = Self::solve_pair(particle, other);
+                corrections.push(correction);
             });
 
             let new_acc = tree.calculate_acceleration(
@@ -115,8 +117,6 @@ impl Attractor {
                     .sqrt())
                 / v_diff_sq;
         }
-
-        particle.position -= v0 * t;
 
         let normal = particle.position - other.position;
         let normal_sq = normal.square();
