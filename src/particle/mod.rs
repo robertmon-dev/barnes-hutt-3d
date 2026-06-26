@@ -1,7 +1,4 @@
-use crate::{
-    attractor::correction::{self, Correction},
-    vector::Vector3,
-};
+use crate::{attractor::correction::Correction, vector::Vector3};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Particle {
@@ -46,12 +43,14 @@ impl Particle {
     }
 
     pub fn apply_correction(&mut self, correction: Correction) {
-        if let Some(position) = correction.position {
-            self.position += position;
+        if let Some(pos_offset) = correction.position {
+            self.position += pos_offset;
         }
 
-        if let Some(last_position) = correction.last_position {
-            self.last_position += last_position;
+        if correction.v0_new != correction.v0 {
+            self.last_position = self.position - correction.v0_new;
+        } else if let Some(last_pos_offset) = correction.last_position {
+            self.last_position += last_pos_offset;
         }
     }
 }

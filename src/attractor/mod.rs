@@ -87,71 +87,44 @@ impl Attractor {
             return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None, index);
         }
 
-        let diff_pos = other.position - particle.position;
+        let diff_pos = particle.position - other.position;
+        let curr_dist_sq = diff_pos.square();
         let coll_dist = particle.radius + other.radius;
-        let curr_dist = particle.position.distance_to(&other.position);
 
-        if curr_dist >= coll_dist || curr_dist == 0.0 {
+        if curr_dist_sq >= coll_dist.powi(2) || curr_dist_sq == 0.0 {
             return Correction::new(0.0, Vector3::zero(), Vector3::zero(), None, None, index);
         }
 
+        let curr_dist = curr_dist_sq.sqrt();
         let overlap = coll_dist - curr_dist;
-        let d_norm = diff_pos / curr_dist;
-        let response = overlap * d_norm;
+
+        let normal = diff_pos / curr_dist;
 
         let v0 = particle.get_velocity();
         let v1 = other.get_velocity();
+        let v_rel = v0 - v1;
 
-        let v_diff = v1 - v0;
-        let diff_dot_v = diff_pos.dot(&v_diff);
+        let dot = v_rel.dot(&normal);
 
         let total_m = particle.mass + other.mass;
-        let weight1 = other.mass / total_m;
 
-        if diff_dot_v >= 0.0 {
+        let weight = other.mass / total_m;
+        let positional_correction = normal * (overlap * weight);
+
+        if dot > 0.0 {
             return Correction::new(
                 0.0,
                 Vector3::zero(),
                 Vector3::zero(),
-                Some(weight1 * response),
+                Some(positional_correction),
                 None,
                 index,
             );
         }
 
-        let curr_dist_sq = curr_dist.powi(2);
-        let coll_dist_sq = coll_dist.powi(2);
-        let dot_v_sq = diff_dot_v.powi(2);
-        let v_diff_sq = v_diff.square();
+        let impulse_mag = (2.0 * dot) / total_m;
+        let v0_new = v0 - normal * (impulse_mag * other.mass);
 
-        let mut t: f32 = 0.0;
-        if v_diff_sq != 0.0 {
-            t = (diff_dot_v
-                + 0.0f32
-                    .max(dot_v_sq - v_diff_sq * (coll_dist_sq - curr_dist_sq))
-                    .sqrt())
-                / v_diff_sq;
-        }
-
-        let normal = particle.position - other.position;
-        let normal_sq = normal.square();
-
-        let v_rel = v0 - v1;
-        let dot = v_rel.dot(&normal);
-        let impulse = (2.0 * dot) / (total_m * normal_sq);
-        let v0_new = v0 - impulse * other.mass * normal;
-
-        if dot < 0.0 && normal_sq != 0.0 {
-            Correction::new(
-                t,
-                v0,
-                v0_new,
-                Some((v0_new * t) - (v0 * t)),
-                Some(v0_new * t),
-                index,
-            )
-        } else {
-            Correction::new(t, v0, v0_new, Some((v0_new * t) - (v0 * t)), None, index)
-        }
+        Correction::new(0.0, v0, v0_new, Some(positional_correction), None, index)
     }
 }
