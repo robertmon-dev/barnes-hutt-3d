@@ -54,7 +54,11 @@ impl Attractor {
                 let query_range = Aabb::new(particle.position, search_radius);
                 let mut local_corrections = Vec::new();
 
-                tree.query_with(&query_range, &mut |_, other, _| {
+                tree.query_with(&query_range, &mut |_, other, _, other_index| {
+                    if index == *other_index {
+                        return;
+                    }
+
                     if let Some(correction) = Self::solve_pair(particle, other, index) {
                         local_corrections.push(correction);
                     }

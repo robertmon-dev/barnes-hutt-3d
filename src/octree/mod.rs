@@ -12,7 +12,7 @@ where
     capacity: usize,
     depth: usize,
     max_depth: usize,
-    points: Vec<(Vector3, T, f32)>,
+    points: Vec<(Vector3, T, f32, usize)>,
     children: Option<Box<[Octree<T>; 8]>>,
 
     is_leaf: bool,
@@ -40,15 +40,15 @@ where
 
     pub fn query_with<F>(&self, range: &Aabb, func: &mut F)
     where
-        F: FnMut(&Vector3, &T, &f32),
+        F: FnMut(&Vector3, &T, &f32, &usize),
     {
         if !self.boundary.intersects(range) {
             return;
         }
 
-        for (p, d, mass) in &self.points {
+        for (p, d, mass, index) in &self.points {
             if range.contains(*p) {
-                func(p, d, mass);
+                func(p, d, mass, index);
             }
         }
 
@@ -95,7 +95,7 @@ where
         if (self.points.len() < self.capacity || self.depth >= self.max_depth)
             && self.children.is_none()
         {
-            self.points.push((point, data, mass));
+            self.points.push((point, data, mass, index));
             return true;
         }
 
@@ -104,7 +104,7 @@ where
 
             let old_points = std::mem::take(&mut self.points);
 
-            for (p, d, mass) in old_points {
+            for (p, d, mass, index) in old_points {
                 self.insert_to_children(p, d, mass, index);
             }
         }
