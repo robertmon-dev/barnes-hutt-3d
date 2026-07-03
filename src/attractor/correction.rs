@@ -1,30 +1,40 @@
 use crate::vector::Vector3;
 
-pub struct Correction {
-    pub t: f32,
-    pub v0: Vector3,
-    pub v0_new: Vector3,
-    pub position: Option<Vector3>,
-    pub last_position: Option<Vector3>,
-    pub index: usize,
-}
-
-impl Correction {
-    pub fn new(
+pub enum Correction {
+    Collision {
+        index: usize,
         t: f32,
         v0: Vector3,
         v0_new: Vector3,
         position: Option<Vector3>,
         last_position: Option<Vector3>,
+    },
+    Gravity {
         index: usize,
-    ) -> Self {
-        Self {
-            t,
-            v0,
-            v0_new,
-            position,
-            last_position,
+        acceleration: Vector3,
+    },
+    Kill {
+        index: usize,
+    },
+}
+
+impl Correction {
+    pub fn from_acceleration(acceleration: Vector3, index: usize) -> Self {
+        Correction::Gravity {
             index,
+            acceleration,
+        }
+    }
+
+    pub fn kill(index: usize) -> Self {
+        Correction::Kill { index }
+    }
+
+    pub fn index(&self) -> usize {
+        match self {
+            Correction::Collision { index, .. } => *index,
+            Correction::Gravity { index, .. } => *index,
+            Correction::Kill { index, .. } => *index,
         }
     }
 }

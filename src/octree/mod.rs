@@ -91,7 +91,7 @@ where
         self.is_leaf = false;
     }
 
-    pub fn insert(&mut self, point: Vector3, data: T, mass: f32) -> bool {
+    pub fn insert(&mut self, point: Vector3, data: T, mass: f32, index: usize) -> bool {
         if (self.points.len() < self.capacity || self.depth >= self.max_depth)
             && self.children.is_none()
         {
@@ -105,18 +105,18 @@ where
             let old_points = std::mem::take(&mut self.points);
 
             for (p, d, mass) in old_points {
-                self.insert_to_children(p, d, mass);
+                self.insert_to_children(p, d, mass, index);
             }
         }
 
-        self.insert_to_children(point, data, mass)
+        self.insert_to_children(point, data, mass, index)
     }
 
-    fn insert_to_children(&mut self, point: Vector3, data: T, mass: f32) -> bool {
+    fn insert_to_children(&mut self, point: Vector3, data: T, mass: f32, index: usize) -> bool {
         if let Some(ref mut children) = self.children {
             for child in children.iter_mut() {
                 if child.boundary.contains(point) {
-                    return child.insert(point, data, mass);
+                    return child.insert(point, data, mass, index);
                 }
             }
         }

@@ -43,14 +43,30 @@ impl Particle {
     }
 
     pub fn apply_correction(&mut self, correction: Correction) {
-        if let Some(pos_offset) = correction.position {
-            self.position += pos_offset;
-        }
+        match correction {
+            Correction::Collision {
+                v0,
+                v0_new,
+                position,
+                last_position,
+                ..
+            } => {
+                if let Some(pos_offset) = position {
+                    self.position += pos_offset;
+                }
 
-        if correction.v0_new != correction.v0 {
-            self.last_position = self.position - correction.v0_new;
-        } else if let Some(last_pos_offset) = correction.last_position {
-            self.last_position += last_pos_offset;
+                if v0_new != v0 {
+                    self.last_position = self.position - v0_new;
+                } else if let Some(last_pos_offset) = last_position {
+                    self.last_position += last_pos_offset;
+                }
+            }
+            Correction::Gravity { acceleration, .. } => {
+                self.acceleration += acceleration;
+            }
+            Correction::Kill { .. } => {
+                self.dead = true;
+            }
         }
     }
 }
