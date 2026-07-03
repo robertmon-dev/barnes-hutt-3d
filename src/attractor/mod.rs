@@ -133,7 +133,6 @@ impl Attractor {
         if dot > 0.0 {
             return Some(Correction::Collision {
                 index,
-                t: 0.0,
                 v0: Vector3::zero(),
                 v0_new: Vector3::zero(),
                 position: Some(positional_correction),
@@ -146,7 +145,6 @@ impl Attractor {
 
         Some(Correction::Collision {
             index,
-            t: 0.0,
             v0,
             v0_new,
             position: Some(positional_correction),

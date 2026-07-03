@@ -3,7 +3,6 @@ use crate::vector::Vector3;
 pub enum Correction {
     Collision {
         index: usize,
-        t: f32,
         v0: Vector3,
         v0_new: Vector3,
         position: Option<Vector3>,
