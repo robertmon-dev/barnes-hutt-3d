@@ -6,7 +6,7 @@
 
 | |
 |---|
-| ![Preview](docs/preview/preview_1.png) |
+| ![Preview](docs/preview/preview_1.gif) |
 
 ## Key Features
 
