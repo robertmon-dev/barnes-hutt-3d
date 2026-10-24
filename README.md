@@ -1,6 +1,6 @@
-# vector3
+# Barness-Hutt
 
-**vector3** is a Rust N-body gravitational particle simulator built around a custom `Vector3` math library, a Barnes–Hut octree for approximate force calculation, and a real-time 3D renderer (`three-d`). It was designed for parallel, cache-friendly particle updates (via `rayon`) and GPU-instanced rendering of large particle counts.
+Literally a Rust N-body gravitational particle simulator built around a custom `Vector3` math library, a Barnes–Hut octree for approximate force calculation, and a real-time 3D renderer (`three-d`). It was designed for parallel, cache-friendly particle updates (via `rayon`) and GPU-instanced rendering of large particle counts.
 
 ## Preview
 
